@@ -1,0 +1,212 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>
+		Untitled Document
+	</title>
+	
+	<!--<script src="http://code.createjs.com/createjs-2013.02.12.min.js"></script>-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<!--<script src="all.js"></script>-->
+	<script src="highscores.js"></script>
+	<script src="game.js"></script>
+	<script src="launcher.js"></script>
+	<script type="text/javascript" src="untitled.js"></script>
+	
+	<script src='https://cdn.firebase.com/v0/firebase.js'></script>
+   
+	
+	
+
+	<style>
+		#game1 {cursor: none;}
+		#img::selection {
+			background: transparent;
+		}
+		#img::-moz-selection {
+			background: transparent;
+		}
+		
+		html {
+		overflow:hidden;
+		}
+		
+		body{
+			
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			
+		}
+		
+		#hG{
+			
+			position: absolute;
+			left: 5%;
+			top: 5%;
+			width: 90%;
+			opacity: .8;
+			height: 5%;
+			background-color: #008016;
+			display: none;
+			z-index: 1001;
+			border-radius: 10px;
+		}
+		
+		#hR{
+			
+			position: absolute;
+			left: 5%;
+			top: 5%;
+			width: 90%;
+			opacity: .8;
+			height: 5%;
+			background-color: #FF0000;
+			display: none;
+			z-index: 1000;
+			border-radius: 10px;
+			
+		}
+		
+		#i {
+			
+			position: absolute;
+			height: 70%;
+			top: 15%;
+			left: 40%;
+			visibility: hidden;
+			z-index: 1100;
+			
+		}
+		
+		#stats{
+			position: absolute;
+			top:90%;
+			left: 5%;
+			font-family: '8bit';
+		}
+		
+		@font-face {
+    		font-family: '8bit';
+    		src: url('http://www.openedfire.com/8bit.ttf');
+		}
+		
+	</style>
+	
+</head>
+<body id = "b">
+
+<canvas  id="myCanvas2" style="position:absolute; top: 0; left = 0; border:1px solid #000000;">
+</canvas>
+<canvas  id="myCanvas" style="position:absolute; top: 0; left = 0; border:1px solid #000000;">
+</canvas>
+<canvas  id="myCanvas3" style="position:absolute; top: 0; left = 0; border:1px solid #000000;">
+</canvas>
+
+<h1 id = "stats"></h1>
+
+
+
+
+<canvas   id="game1" style="position:absolute; z-index: 10;  top: 0; left = 0;  visibility: hidden;">
+</canvas>
+
+<canvas   id="splat" style="position:absolute; z-index: 0;  top: 0; left = 0;  visibility: hidden;">
+</canvas>
+
+
+
+<img src = "img/Map/Map.png" height="100px" width= "100px" id="img"/>
+
+<img src = "img/instructions.gif" id="i"/>
+
+
+<canvas  id="coop" style="position:absolute; top: 0; left = 0; border:1px solid #000000; visibility: hidden;">
+</canvas>
+
+
+
+
+<!--<canvas  id="settings" style="position:absolute; top: 0; left = 0; border:1px solid #000000; visibility: hidden;">
+</canvas>-->
+
+<div id="settings" style="position:absolute; background-color: #ff80ff; top: 10%; left: 10%; z-index: 100; border:1px solid #000000; visibility: hidden;">
+
+	<input type="text" id="moveup" value="w" maxlength="1"> Up
+	<br>
+	
+	<input type="text" id="moveleft" value="a" maxlength="1"> Left
+	<br>
+	<input type="text" id="movedown" value="s" maxlength="1"> Down
+	<br>
+	
+	<input type="text" id="moveright" value="d" maxlength="1"> Right
+	<br>
+	<center>
+	<input type="button" id="button" value="Play game", onclick="reassignKeys(document.getElementById('moveup').value, document.getElementById('movedown').value, document.getElementById('moveleft').value, document.getElementById('moveright').value)" >
+	</center>
+	
+</div>
+
+
+<canvas  id="highscores" style="position:absolute; top: 0; left = 0; border:1px solid #000000; visibility: hidden;">
+</canvas>
+
+<div id = "hG"></div>
+
+<div id = "hR"></div>
+
+<audio id="audio">
+  <source src="sounds/laser.wav" type="audio/wav">
+  <embed height="50" width="100" src="sounds/laser.wav">
+</audio>
+
+<audio id="audio2">
+  <source src="sounds/laser.wav" type="audio/wav">
+  <embed height="50" width="100" src="sounds/laser.wav">
+</audio>
+
+<div id = "m" style="position: absolute; top:0px;left:0px;"><h1>0</h1></div>
+
+<!--<iframe id = "iframe" style="width:100%; height:100%; position: absolute; left:0%; top: 0%; z-index: 100; visibility: hidden;" src="http://openedfire.com/settings.html" ></iframe>-->
+
+<iframe width = "100%" height = "100%" id = "book" style=" position: absolute; left:0%; top: 0%; visibility: hidden;" src="http://openedfire.com/book.html" ></iframe>
+
+
+<img id = "exit" style="width:5%; position: absolute; left:92%; top: 10%; z-index: 110; visibility: hidden;" src = "http://i680.photobucket.com/albums/vv165/Ly1e3/bth_Re-X_zps30905e24.png"  />
+
+<!--<img src="http://icongal.com/gallery/image/6028/arrow_expand_full_screen_move.png" style="position: absolute; top: 5%; left: 5%; width: 5%; " onclick = "full()"/>
+
+-->
+
+<!--Universal scripts-->
+<script>
+
+function removejscssfile(filename, filetype){
+	var targetelement=(filetype=="js")? "script" : (filetype=="css")? "link" : "none" //determine element type to create nodelist from
+ 	var targetattr=(filetype=="js")? "src" : (filetype=="css")? "href" : "none" //determine corresponding attribute to test for
+ 	var allsuspects=document.getElementsByTagName(targetelement)
+ 	for (var i=allsuspects.length; i>=0; i--){ //search backwards within nodelist for matching elements to remove
+  		if (allsuspects[i] && allsuspects[i].getAttribute(targetattr)!=null && allsuspects[i].getAttribute(targetattr).indexOf(filename)!=-1)
+   			allsuspects[i].parentNode.removeChild(allsuspects[i]) //remove element by calling parentNode.removeChild()
+ 	}
+}
+//width:130%; height:130%;
+function createjscssfile(filename, filetype){
+ if (filetype=="js"){ //if filename is a external JavaScript file
+  var fileref=document.createElement('script')
+  fileref.setAttribute("type","text/javascript")
+  fileref.setAttribute("src", filename)
+ }
+ return fileref;
+}
+
+</script>
+
+</body>
+</html>
+
+
+
+
+

@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>
+		Documentation
+	</title>
+	
+	<style>
+	
+		#bdy{
+			
+			background-color: #FFF;
+			width: 80%;
+			position: absolute;
+			left: 10%;
+		}
+		
+		body{
+			background-color:#DDD;
+		}
+		
+		p{
+			margin-left: 10%;
+			width: 50%;
+		}
+		
+		h2{
+			margin-left: 2%;	
+		}
+	
+	</style>
+</head>
+<body>
+
+<div id = "bdy">
+	<center>
+	<h1>Documentation</h1>
+	
+	<br>
+	<br>
+	
+	<font color="red">Note: When uploading the graphical versoin of this assignment, the wrong .cpp file was used.<br>  The documentation for the exra credit can be found at the bottom of this page, and the executable file can be found here: <a href="http://shidel.com/graphics.exe">shidel.com/graphics.exe</a> </font>
+	</center>
+	<br>
+	
+	<h2>User Manual:</h2>
+	<br>
+	
+	<p>
+	
+	With this program, you will have instant access to one of the worlds most popular puzzle games, Sudoku.  This version of the game is available in a graphical mode, as well as in a textual mode.
+	</p>
+	<p>
+	To play the game in either mode, you must first provide a .txt file named file.txt and place it in the same folder as the program itself. The file is simply the value of each Sudoku cell (81 in total), from left to right and top to bottom, with spaces between each entry. 
+	</p>
+	<p>
+
+	To play the console version of the game, simply enter in the desired choice in the form 
+X Y SELECTION. With X being a number between 0 and 8, Y being a character between A and I, and SELECTION being the value to be placed in the cell.
+</p>
+<p>
+	To play the graphical addition, enter in the X and Y positions when prompted by the program (with X and Y both being numbers). Then, when prompted, enter the number that you would like to be placed in the cell.
+</p>
+	
+	
+	
+	<br>
+	<h2>System Manual:</h2>
+	<br>
+	
+	<p>
+	This program achieves the creation of a playable Sudoku by first creating a grid class in order to store, inspect and manipulate the structure of the game board. The class, called grid is simply a class with a multidimensional vector of integer arrays as a public variable, and a set of public methods to act as an interface to the vector.
+	</p>
+	
+	<p>
+	Once the Grid is initialized, the vector is filled with data from a file called file.txt (whose structure is specified above).  Then, the user is repeatedly prompted for for input in the X Y SELECTION format.  Once input is generated, the program checks for validity by using the method check() of the Grid class, and if it is valid, it will output the the updated board using the display() method.
+	</p>
+	
+	<p>
+	For the graphical addition to the game, the Horstman Graphics package is used to display the board.  In this version, the user input is retrieved using the cwin.get_int(string) method, otherwise, the backend operates as specified above.
+	</p>
+	
+	<br>
+	
+	<h2>Test Log:</h2>
+	<br>
+	<center>
+	<h3>Main Assignment Screenshots:</h3>
+	<br>
+	
+	<img src ="http://openedfire.com/snips4/Capture.PNG"  />
+	<img src ="http://openedfire.com/snips4/Capture2.PNG" />
+	<img src ="http://openedfire.com/snips4/Capture3.PNG" />
+	</center>
+	<br>
+	<br>
+	<center>
+	<h3>Extra Credit Screenshots:</h3>
+	<br>
+	
+	<img src ="http://openedfire.com/snips4/Capture4.PNG" />
+	<img src ="http://openedfire.com/snips4/Capture5.PNG" />
+	</center>
+	
+	
+	<p>
+	
+	</p>
+	
+	
+
+</div>
+<script>
+
+</script>
+
+</body>
+</html>
