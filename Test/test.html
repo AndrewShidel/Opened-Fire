@@ -1,0 +1,39 @@
+<html>
+
+	<head>
+		<script>
+			var ws = new WebSocket('ws://localhost:1234', 'echo-protocol'),
+				first = true,
+				id;
+
+			function sendMessage(){
+    			var message = document.getElementById('in').value;
+    			ws.send(id+':'+message);
+			}
+
+			ws.addEventListener("message", function(e) {
+			    // The data is simply the message that we're sending back
+			    var msg = e.data;
+
+			    if(first){
+			    	id = msg;
+			    	first = false;
+			    }
+
+			    // Append the message
+			    document.getElementById('out').innerHTML += '<br>' + msg;
+			});
+
+		</script>
+	</head>
+
+
+
+	<body>
+		<input type="text" id="in"/>
+		<input type="button" onclick="sendMessage()" id="sub"/>
+		<div id="out"></div>
+	</body>
+
+
+</html>
