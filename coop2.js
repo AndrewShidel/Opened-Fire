@@ -186,10 +186,108 @@ var zimg2;
 
 var zimg3;
 
+var ws = new WebSocket('ws://localhost:1234', 'echo-protocol'),
+				first = true,
+				id;
+
+ws.addEventListener("message", function(e) {
+			    // The data is simply the message that we're sending back
+			    var msg = e.data;
+
+			    if(first){
+			    	id = msg;
+			    	console.log("id: "+id);
+			    	first = false;
+			    }else{
+			    	if (msg == "connected"){
+			    		console.log("connected");
+			    		game(0,0,0,0);
+			    		playerHealth = 999999;
+
+			    	}else{
+			    		console.log("recieved msg");
+			    		parseFromPlayer1(JSON.parse(msg))
+			    	}
+			    }
+
+			    
+			});
+
+
+//For player 1 to send to player 2.
+function makeJSON(){
+
+
+	var json = {
+
+		"x":x,
+		"y":y,
+		"zx":zx,
+		"zy":zy,
+		"gears":gears
+
+
+	}
+
+	ws.send(id+":::"+JSON.stringify(json));
+
+}
+
+function makeJSONx(){
+
+
+	var json = {
+
+		"x":x,
+		"y":y,
+	}
+
+	ws.send(id+":::"+JSON.stringify(json));
+
+}
+
+//For player 2 to send to player 1.
+function makeResponseJSON(){
+	var json = {
+		x:x,
+		y:y,
+		zx:zx,
+		zy:zy,
+		gears:gears
+	}
+}
+
+//Parse JSON sent from player 1 to player 2
+function parseFromPlayer1(json){
+	user2x = json.x;
+	user2y = json.y;
+	zx = json.zx;
+	zy = json.zy;
+}
+
+function parseFromPlayer1xfdsa(json){
+	user2x = json.x;
+	user2y = json.y;
+}
+
+//Parse JSON sent from player 2 to player 1.
+function parseFromPlayer2(json){
+	user2x = json.x;
+	user2y = json.y;
+	zx = json.zx;
+	zy = json.zy;
+}
+
+
+
+
+
 function game2(){
+	console.log("coop2 loaded");
 	w=$(window).width();
 	h=$(window).height();
-	game(0,0,0,0);
+
+	//game(0,0,0,0);
 }
 
 //Ititiates the game board and everything that goes with it.
@@ -276,8 +374,8 @@ function game(up, down, left, right){
 	playerImage = new Image();
 	playerImage.src =  "./img/Human808/808.png";
 	
-	playerImg2 = new Image();
-	playerImg2.src =  "./img/Human71-M/Ti-M.png";
+	//playerImg2 = new Image();
+	//playerImg2.src =  "http://openedfire.com/img/Human71-M/Ti-M.png";
 	
 	rock = new Image();
 	
@@ -319,14 +417,14 @@ function game(up, down, left, right){
 	
 	//Create the first zombies
 	for (var i = 0; i<1; i++){
-	newZombie(Math.random() * w,Math.round(Math.random())*h);
+		newZombie(Math.random() * w,Math.round(Math.random())*h);
 	}
 	
 	//Start playing the music
-	var myAudio = new Audio('sounds/Opened Fire.wav'); 
+	var myAudio = new Audio('http://openedfre.com/sounds/Opened Fire.wav'); 
 	myAudio.addEventListener('ended', function() {
-	    this.currentTime = 0;
-	    this.play();
+		this.currentTime = 0;
+		this.play();
 	}, false);
 	myAudio.play();
 	
@@ -344,27 +442,27 @@ function game(up, down, left, right){
 	
 	//Called when any key is pressed
 	document.onkeypress=function(e){
- 		var e=window.event || e
- 		var char = String.fromCharCode(e.charCode);
- 		pressed = char;
- 		
- 		if (e.keyCode == 32 || char == " ") {
- 			
- 			
- 			throw2();
- 			
- 		}
- 		
+		var e=window.event || e
+		var char = String.fromCharCode(e.charCode);
+		pressed = char;
+
+		if (e.keyCode == 32 || char == " ") {
+
+
+			throw2();
+
+		}
+
  		//interval2 = setInterval(function(){send();},50);
  		
  		//Upu
  		if (char == upkey){
  			if (y>blocksize){
  				if (!kup){
- 				 kup = true;
-				 fx = frameWidth*2;
-				 fy = 0;
-				 direction = 1;
+ 					kup = true;
+ 					fx = frameWidth*2;
+ 					fy = 0;
+ 					direction = 1;
  				}
  			}else{
  				//kup = false;	
@@ -375,10 +473,10 @@ function game(up, down, left, right){
  		if (char == downkey){
  			if (y<h-100 - blocksize){
  				if (!kdown){
- 				 kdown = true;	
- 				 fx = frameWidth*2;
- 				 fy = frameHeight*4;
- 				 direction = 2;
+ 					kdown = true;	
+ 					fx = frameWidth*2;
+ 					fy = frameHeight*4;
+ 					direction = 2;
  				}
  			}else{
  				//kdown = false;
@@ -389,10 +487,10 @@ function game(up, down, left, right){
  		if (char == leftkey){
  			if (x>blocksize){
  				if (!kleft){
- 				 kleft = true;
- 				 fx = 0;
- 				 fy = frameHeight*3;
- 				 direction = 3;
+ 					kleft = true;
+ 					fx = 0;
+ 					fy = frameHeight*3;
+ 					direction = 3;
  				}                                            ///////////////////////////////////////////////////////////////////////////////////////
  			}else{
  				//kleft = false;
@@ -401,38 +499,39 @@ function game(up, down, left, right){
  		
  		//Right
  		if (char == rightkey){
- 		
-			if (x<w-100 - blocksize){
-				if (!kright){
-				kright = true;
-				fx = frameWidth*3;
-				fy = frameHeight*3;
-				direction = 4;
-				}
-			}else{
+
+ 			if (x<w-100 - blocksize){
+ 				if (!kright){
+ 					kright = true;
+ 					fx = frameWidth*3;
+ 					fy = frameHeight*3;
+ 					direction = 4;
+ 				}
+ 			}else{
 			//	kright = false;
-			}
-			
- 		}
- 		
+		}
+
+	}
+
  		//Initiating Multiplayer
  		if (char == '1'){
  			player = 1;
- 			multi();
- 			send();
+ 			//multi();
+ 			//send();
  		}
  		
  		if (char == '2'){
  			player = 2;
- 			multi();
- 			send();
+ 			//multi();
+ 			//send();
  		}
  		
- 		send();
- 	
+ 		//send();
+ 		//alert("Sending...");
+ 		makeJSON();
  		
-	}
-	
+ 	}
+
 	//If any key is raised, then stop all movement
 	document.onkeyup=function(e){
 		
@@ -447,13 +546,13 @@ function game(up, down, left, right){
 		if (pressed == 'e'){
 			if (box1 > 0){
 				if (gun == 1){
-						console.log("gun change");
-						gun = 2;
-						console.log("poop change");
-						box1-=1;
-						console.log("yay change");
+					console.log("gun change");
+					gun = 2;
+					console.log("poop change");
+					box1-=1;
+					console.log("yay change");
 					
-			
+
 				}else if (gun == 2){
 					if (box1 >= 2){
 						gun = 3;
@@ -502,20 +601,28 @@ function game(up, down, left, right){
 		
 		document.getElementById("i").style.visibility = "hidden";
 		
-		run();
+		//run();
 		
 		//Re-Draw the game every specified number of miliseconds
 		interval = setInterval(function(){postdraw();},10);
 		
 		//Re-Draw the charactors' animation every specified number of miliseconds
 		setInterval(function(){reload();},500);
+
+		/*
+		window.setInterval(function(){
+			makeJSON();
+		}, 100)*/
 		
 		//setInterval(function(){send();},5);
-		send();
+		//send();
 		
 		
-	
+
 	};
+
+
+
 }
 
 
@@ -526,9 +633,9 @@ function reload(){
 	if (kup){
 		//Update the frame of the sprite
 		if (fy < frameHeight){
-			 fy += frameHeight;
+			fy += frameHeight;
 		}else{
-			 fy = 0;
+			fy = 0;
 		}
 	}else if(kdown){
 		fy += frameHeight;
@@ -554,9 +661,9 @@ function reload(){
 		if (zd[i] == "up"){
 			//Update the frame of the sprite
 			if (fy2[i] < frame2Height){
-				 fy2[i] += frame2Height;
+				fy2[i] += frame2Height;
 			}else{
-				 fy2[i] = 0;
+				fy2[i] = 0;
 			}
 		}else if(zd[i] == "down"){
 			fy2[i] += frame2Height;
@@ -576,7 +683,7 @@ function reload(){
 		}else{
 			console.log("else")
 		}
-	
+
 	}
 	
 	
@@ -590,20 +697,20 @@ function update(){
 	//alert("Pause");
 	
 	//Keeps player from running off the screen
- 	if (y<blocksize){
- 		kup = false;	
- 	}
- 	
- 	if (!blocksize){
- 				
- 		kdown = false;
- 	}
- 		
- 	if (x<blocksize){
- 				 
- 		kleft = false;
- 	}
- 		
+	if (y<blocksize){
+		kup = false;	
+	}
+
+	if (!blocksize){
+
+		kdown = false;
+	}
+
+	if (x<blocksize){
+
+		kleft = false;
+	}
+
 	if (!(x<w-100 - blocksize)){
 		
 		kright = false;
@@ -611,13 +718,13 @@ function update(){
 	
 	//Projectiles!!!
 	if (missiles.length > 0){
-	for (var i = 1; i < missiles.length; i += 4){
-		var spd = 30;
-		var dx, dy;
-		dx =  missiles[i] - missiles[i+2];
-		dy =  missiles[i+1] - missiles[i+3] ;
-		var dydx = dy/dx;
-		var speedx, speedy;
+		for (var i = 1; i < missiles.length; i += 4){
+			var spd = 30;
+			var dx, dy;
+			dx =  missiles[i] - missiles[i+2];
+			dy =  missiles[i+1] - missiles[i+3] ;
+			var dydx = dy/dx;
+			var speedx, speedy;
 		/*if (Math.abs(dydx) > Math.PI/2){
 			dydx -= Math.PI/2;	
 		}*/
@@ -641,75 +748,75 @@ function update(){
 				missiles[i+1]+= speedy ;
 				
 			}
-		for(var j = 0; j<zx.length; j++){
-			if ( missiles[i] >= w || missiles[i+1] >= h || missiles[i] <= 0 || missiles[i+1]<=0){
-				 	missiles.splice(i,4);
-			}
-			if (j != g[0]){
-				if (dst(zx[j],zy[j], missiles[i], missiles[i+1]) < blocksize){
-					
-					drawSplat(zx[j],zy[j]);
-					
-					if (zt[j] == 1){
-						if (Math.random() < .5){
-							
-						 	zx.splice(j,1);
-						 	zy.splice(j,1);
-						 	zspeed.splice(j,1);
-						 	fx2.splice(j,1);
-						 	fy2.splice(j,1);
-						 	zd.splice(j,1);
-						 	zt.splice(j,1);
-						 	
+			for(var j = 0; j<zx.length; j++){
+				if ( missiles[i] >= w || missiles[i+1] >= h || missiles[i] <= 0 || missiles[i+1]<=0){
+					missiles.splice(i,4);
+				}
+				if (j != g[0]){
+					if (dst(zx[j],zy[j], missiles[i], missiles[i+1]) < blocksize){
+
+						drawSplat(zx[j],zy[j]);
+
+						if (zt[j] == 1){
+							if (Math.random() < .5){
+
+								zx.splice(j,1);
+								zy.splice(j,1);
+								zspeed.splice(j,1);
+								fx2.splice(j,1);
+								fy2.splice(j,1);
+								zd.splice(j,1);
+								zt.splice(j,1);
+
+							}
+
+						}else if(zt[j] == 0){
+
+							zx.splice(j,1);
+							zy.splice(j,1);
+							zspeed.splice(j,1);
+							fx2.splice(j,1);
+							fy2.splice(j,1);
+							zd.splice(j,1);
+							zt.splice(j,1);
+
+						}else{
+							if (Math.random() < .2){
+
+								zx.splice(j,1);
+								zy.splice(j,1);
+								zspeed.splice(j,1);
+								fx2.splice(j,1);
+								fy2.splice(j,1);
+								zd.splice(j,1);
+								zt.splice(j,1);
+
+							}
 						}
-				 	
-					}else if(zt[j] == 0){
-						
-						zx.splice(j,1);
-					 	zy.splice(j,1);
-					 	zspeed.splice(j,1);
-					 	fx2.splice(j,1);
-					 	fy2.splice(j,1);
-					 	zd.splice(j,1);
-					 	zt.splice(j,1);
-						
-					}else{
-						if (Math.random() < .2){
-							
-						 	zx.splice(j,1);
-						 	zy.splice(j,1);
-						 	zspeed.splice(j,1);
-						 	fx2.splice(j,1);
-						 	fy2.splice(j,1);
-						 	zd.splice(j,1);
-						 	zt.splice(j,1);
-						 	
-						}
+
+
+
+						if (gun == 1 || gun == 3) missiles.splice(i,4);
+
+						numZombies--;
+						zombiesKilled++;
+						score += Math.random() * 100
+
 					}
-				 	
-				 	
-				 
-				 	if (gun == 1 || gun == 3) missiles.splice(i,4);
-				 
-				 	numZombies--;
-				 	zombiesKilled++;
-				 	score += Math.random() * 100
-				 
-			}
-			
+
 			//Else, it is a missile.
-			}else{
-				
-			}
+		}else{
+
 		}
-		
-		}
-		
-		
 	}
-	}
-	
-	
+
+}
+
+
+}
+}
+
+
 	// Updates the position of all current zombies
 	if(zx.length > 0){
 		for (var i = 0; i<zx.length; i++)
@@ -742,51 +849,51 @@ function update(){
 					zy[i]+= speedy ;
 					
 				}
-			
+
 				//document.getElementById("m").innerHTML = "<h1>" + theta + "</h1>";
-			
+
 			}
 			
 			var speedxa = Math.abs(speedx);
 			var speedya = Math.abs(speedy);
 			if (speedxa <= speedya && speedy >= 0){
 				if (zd[i] != "down"){
-				 fx2[i] = frame2Width*2;
- 				 fy2[i] = frame2Height*4;
+					fx2[i] = frame2Width*2;
+					fy2[i] = frame2Height*4;
 				}
-				 zd[i] = "down"; 
-				 
+				zd[i] = "down"; 
+
 			}else if (speedxa < speedya && speedy < 0){ 
 				if (zd[i] != "up"){
-				fx2[i] = frame2Width*2;
-				fy2[i] = 0;
+					fx2[i] = frame2Width*2;
+					fy2[i] = 0;
 				}
 				zd[i] = "up";
 				
 				
 			}else if (speedxa >= speedya && speedx >= 0){ 
 				if (zd[i] != "right"){
-				fx2[i] = frame2Width*3;
-				fy2[i] = frame2Height*3;
+					fx2[i] = frame2Width*3;
+					fy2[i] = frame2Height*3;
 				}
 				zd[i] = "right";
 				
 			}else if (speedxa > speedya && speedx < 0){
 				if (zd[i] != "left"){
-				 fx2[i] = 0;
- 				 fy2[i] = frame2Height*3;
+					fx2[i] = 0;
+					fy2[i] = frame2Height*3;
 				}
-				 zd[i] = "left";
+				zd[i] = "left";
 			}
 			//Removes player health when zombies are near
 			if ( dst(x, y, zx[i], zy[i]) < frameWidth )
-				{
-					playerHealth-=.05;
-					document.getElementById("hG").style.width = .9*playerHealth + "%";
-				}
+			{
+				playerHealth-=.05;
+				document.getElementById("hG").style.width = .9*playerHealth + "%";
 			}
+		}
 	}
- 	
+
 	//Updates the movement of the player
 	if (kup) y -= step;
 	if (kdown) y += step;
@@ -803,13 +910,13 @@ function update(){
 	
 	//Difficulty level incresing
 	if (Math.random() < difficulty){
-		 var rand = Math.random(); 
+		var rand = Math.random(); 
 		 //Was .5 changed to .4 MIKE CHANGE
 		 if (rand <= .4){newZombie(Math.random() * w,Math.round(Math.random())*h);
 		 }else{newZombie(Math.round(Math.random())*w,Math.random()*h);}
-	}
-	difficulty += difficulty/2000;
-	
+		}
+		difficulty += difficulty/2000;
+
 	//Player loses health over time
 	playerHealth-=0.01;
 	
@@ -839,13 +946,13 @@ function update(){
 	}
 	
 	if (!bombOn){
-	
+
 		if (Math.random() < .0005){
 			bombOn = true;
 			bx = Math.random() * w;
 			by = Math.random() * h;
 		}
-	
+
 	}else{
 		
 		if (dst(x,y,bx, by) < 50){
@@ -884,46 +991,46 @@ function postdraw(){
 	ctx1.clearRect ( 0 , 0 , w , h );
 	
 	if (bombOn){
- 		ctx1.drawImage(bomb, bx, by,100,100); 	
- 	}
+		ctx1.drawImage(bomb, bx, by,100,100); 	
+	}
 	
 	for (var i = 0; i < rx.length; i++){
- 		if (rt[i] <= 1) ctx1.drawImage(rock, 0, 0, 90, 80, rx[i], ry[i], frameWidth*.5, frameHeight*.5); 
- 	}
- 	
- 	for (var i = 0 ; i < walls.length; i = i + 2){
+		if (rt[i] <= 1) ctx1.drawImage(rock, 0, 0, 90, 80, rx[i], ry[i], frameWidth*.5, frameHeight*.5); 
+	}
+
+	for (var i = 0 ; i < walls.length; i = i + 2){
  		//ctx1.drawImage(pattern, walls[i], walls[i+1],blocksize,blocksize); 
  	}
  	
  	for (var i = 0; i < gears.length; i = i + 2){
  		ctx1.drawImage(box, gears[i], gears[i+1], 40, 40);
  	}
-	if (gun == 1){
+ 	if (gun == 1){
  		ctx1.fillStyle = '#ffff00';
-	}else if (gun == 2 || gun == 4){
-		ctx1.fillStyle = '#ff0000';
-	}else{
-		ctx1.fillStyle = '#c0c0c0';
-	}
+ 	}else if (gun == 2 || gun == 4){
+ 		ctx1.fillStyle = '#ff0000';
+ 	}else{
+ 		ctx1.fillStyle = '#c0c0c0';
+ 	}
  	for (var i = 1; i < missiles.length; i += 4)
  		ctx1.fillRect(missiles[i], missiles[i+1], 10, 10);
-	
+
  	//Draw player
  	ctx1.drawImage(playerImage, fx, fy, frameWidth, frameHeight, x, y, frameWidth, frameHeight);
  	//ctx1.fillRect(x, y, 50, 50);
- 		
- 	//ctx1.fillRect(user2x, user2y, 50, 50);
+
+ 	ctx1.fillRect(user2x, user2y, 50, 50);
  	
  	
- 	ctx1.drawImage(playerImg2, fx2, fy2, frameWidth, frameHeight, user2x, user2y, frameWidth, frameHeight);
+ 	//ctx1.drawImage(playerImg2, fx2, fy2, frameWidth, frameHeight, user2x, user2y, frameWidth, frameHeight);
  	
  	/*ctx1.font="60px Arial";
-	ctx1.fillText(opponent,user2x,user2y);*/
-	
+ 	ctx1.fillText(opponent,user2x,user2y);*/
+
 	//MIKE CHANGE: Small YELLOW SCORE
 	//ctx1.font = '168px 8bit';
 	//ctx1.fillText("Score: " +  Math.floor(score),w - w/4,h - h/8);
- 	
+
  	//Create all brick
  	for (var i = 0; i<sidesy.length; i++){
  		//ctx1.fillRect(sidesx[i], sidesy[i], blocksize *.9, blocksize * .9);
@@ -938,7 +1045,7 @@ function postdraw(){
  		if (fx2[i] > img2Width || fy2[i] > imgHeight || fx2[i] < 0 || fy2[i] < 0) console.log(fx2[i] + ", " + fy2[i] + ": " + zd[i] );
  		
  		if (zt[i] == 0){
-	 		ctx1.drawImage(zimg, fx2[i], fy2[i], frame2Width, frame2Height, zx[i], zy[i], frame2Width, frame2Height);
+ 			ctx1.drawImage(zimg, fx2[i], fy2[i], frame2Width, frame2Height, zx[i], zy[i], frame2Width, frame2Height);
  		}else if (zt[i] == 1){
  			ctx1.drawImage(zimg2, fx2[i], fy2[i], frame2Width, frame2Height, zx[i], zy[i], frame2Width, frame2Height);
  		}else{
@@ -947,7 +1054,7 @@ function postdraw(){
  	}
  	
  	
-	
+
 	//Draws crosshairs
 	ctx1.drawImage(crosshairs, cx - c1R*1.5, cy - c1R*1.2,c1R*2,c1R*2); 
 	
@@ -967,8 +1074,8 @@ function postdraw(){
 	}
  	//rate =  1/ ( ((new Date()).getTime() - time)/1000 );
 
-	document.getElementById("stats").innerHTML = "Supplies: " + box1 + "   Score: " + Math.floor(score);
-	
+ 	document.getElementById("stats").innerHTML = "Supplies: " + box1 + "   Score: " + Math.floor(score);
+
 	//document.getElementById("m").innerHTML = "<h1>"+ "Kills: " + zombiesKilled + "    Health: " + Math.round(playerHealth) + "    Number of Zombies: " + numZombies + "   Framerate: " + Math.round(rate) +  " fps   Score: " + Math.floor(score) + "    boxes: " + box1 + "  gun: " + gun + "</h1>" ;
 	time = (new Date()).getTime();
 	
@@ -991,9 +1098,9 @@ function initializeWalls(){
 	var count = h/blocksize;
 	var num = 0;
 	for (var i = 0; i<=count; i++){
-		 sidesy[i] = i*blocksize;
-		 sidesx[i] = 0;
-		 num++;
+		sidesy[i] = i*blocksize;
+		sidesx[i] = 0;
+		num++;
 	}
 	count = w/blocksize;
 	for (var i = 0; i<=count; i++){
@@ -1020,51 +1127,51 @@ function initializeWalls(){
 
 
 
-	function fire(){
-		var snd1  = new Audio();
-		var src1  = document.createElement("source");
-		src1.type = "sounds/Gun sounds/Pew(Gun1).wav";
-		if (gun == 1){
-			src1.src  = "sounds/Gun sounds/Pew(Gun1).wav";
-		}else if(gun == 2){
-			src1.src  = "sounds/Gun sounds/Bpgau(Gun2).wav";
-		}else if (gun == 3){
-			src1.src  = "sounds/Gun sounds/PicPicPic(Gun3).wav";	
-		}else if (gun == 4){
-			src1.src  = "sounds/Gun sounds/TcTcTc(Gun4).wav";
-		}
-		
-		snd1.appendChild(src1);
-		snd1.play();
-		
-		console.log(x2 + ", " + y2 + ", " + gun)
-		if (missiles.length != 0){
-			missiles[ missiles.length] = x
-		}else{
-			missiles[ missiles.length + 1] = x
-		}
-		missiles[ missiles.length] = y
-		missiles[ missiles.length] = cx + (cx- x)*100
-		missiles[ missiles.length] = cy + (cy - y)*100	
+function fire(){
+	var snd1  = new Audio();
+	var src1  = document.createElement("source");
+	src1.type = "sounds/Gun sounds/Pew(Gun1).wav";
+	if (gun == 1){
+		src1.src  = "sounds/Gun sounds/Pew(Gun1).wav";
+	}else if(gun == 2){
+		src1.src  = "sounds/Gun sounds/Bpgau(Gun2).wav";
+	}else if (gun == 3){
+		src1.src  = "sounds/Gun sounds/PicPicPic(Gun3).wav";	
+	}else if (gun == 4){
+		src1.src  = "sounds/Gun sounds/TcTcTc(Gun4).wav";
 	}
-	
-	function throw2(){
-		
-		if (missiles.length != 0){
-			missiles[ missiles.length] = x
-		}else{
-			missiles[ missiles.length + 1] = x
-		}
-		missiles[ missiles.length] = y
-		missiles[ missiles.length] = cx + (cx- x)
-		missiles[ missiles.length] = cy + (cy - y)	
-		
-		g[g.length] = missiles.length - 1;
-		setTimeout(function(){
-			missiles.splice(g[0],1);
-			
-		},2000);
+
+	snd1.appendChild(src1);
+	snd1.play();
+
+	console.log(x2 + ", " + y2 + ", " + gun)
+	if (missiles.length != 0){
+		missiles[ missiles.length] = x
+	}else{
+		missiles[ missiles.length + 1] = x
 	}
+	missiles[ missiles.length] = y
+	missiles[ missiles.length] = cx + (cx- x)*100
+	missiles[ missiles.length] = cy + (cy - y)*100	
+}
+
+function throw2(){
+
+	if (missiles.length != 0){
+		missiles[ missiles.length] = x
+	}else{
+		missiles[ missiles.length + 1] = x
+	}
+	missiles[ missiles.length] = y
+	missiles[ missiles.length] = cx + (cx- x)
+	missiles[ missiles.length] = cy + (cy - y)	
+
+	g[g.length] = missiles.length - 1;
+	setTimeout(function(){
+		missiles.splice(g[0],1);
+
+	},2000);
+}
 
 
 	//Called when the mouse is pressed.
@@ -1086,20 +1193,20 @@ function initializeWalls(){
 		}else{
 			
 			var snd1  = new Audio();
-		var src1  = document.createElement("source");
-		src1.type = "audio/wav";
-		if (gun == 1){
-			src1.src  = "sounds/Gun sounds/Pew(Gun1).wav";
-		}else if(gun == 2){
-			src1.src  = "sounds/Gun sounds/Bpgau(Gun2).wav";
-		}else if (gun == 3){
-			src1.src  = "sounds/Gun sounds/PicPicPic(Gun3).wav";	
-		}else if (gun == 4){
-			src1.src  = "sounds/Gun sounds/TcTcTc(Gun4).wav";
-		}
-		console.log(src1.src);
-		snd1.appendChild(src1);
-		snd1.play();
+			var src1  = document.createElement("source");
+			src1.type = "audio/wav";
+			if (gun == 1){
+				src1.src  = "sounds/Gun sounds/Pew(Gun1).wav";
+			}else if(gun == 2){
+				src1.src  = "sounds/Gun sounds/Bpgau(Gun2).wav";
+			}else if (gun == 3){
+				src1.src  = "sounds/Gun sounds/PicPicPic(Gun3).wav";	
+			}else if (gun == 4){
+				src1.src  = "sounds/Gun sounds/TcTcTc(Gun4).wav";
+			}
+			console.log(src1.src);
+			snd1.appendChild(src1);
+			snd1.play();
 			
 			if (missiles.length != 0){
 				missiles[ missiles.length] = x
@@ -1109,7 +1216,7 @@ function initializeWalls(){
 			missiles[ missiles.length] = y
 			missiles[ missiles.length] = tx(e) + (tx(e) - x)*100
 			missiles[ missiles.length] = ty(e) + (ty(e) - y)*100
-		
+
 		}
 		
 		
@@ -1133,36 +1240,36 @@ function initializeWalls(){
 	function tx(e){
 		var x;
 		
-			
-			x = e.pageX;	
+
+		x = e.pageX;	
 		
-			
-			if (x==0 || x==null)x = e.targetTouches[0].pageX;
+
+		if (x==0 || x==null)x = e.targetTouches[0].pageX;
 		
 		return x;
 	}
 	//Get y co-ords of mouse
 	function ty(e){
 		var y;
-	
+
 		y = e.pageY;	
-	
+
 		if (y==0 || y==null)y = e.targetTouches[0].pageY;
-	
+
 		return y;
 	}
 	
 	
 	function isValidCode(code){
-    	return ($.inArray(code, codes) > -1);
+		return ($.inArray(code, codes) > -1);
 	}
 
 	//Called every time that the mouse position changes and updates the position of the crosshairs
 	function move2(e){
-			
+
 		cx = x2(e);
 		cy = y2(e);
-				
+
 	}
 	
 	/*function double(e){
@@ -1189,7 +1296,7 @@ function initializeWalls(){
 		if (cx < w/2 && cy > h/4 && cy < h - h/4 && !kleft) {
 			kleft = true;
 			fx = 0;
- 			fy = frameHeight*3;
+			fy = frameHeight*3;
 		}else if (cx > w/2 && cy > h/4 && cy < h - h/4){
 			if (!kright){
 				kright = true;
@@ -1199,20 +1306,20 @@ function initializeWalls(){
 			
 		}else if (cy < h/2 && cx > w/4 && cx < w - w/4){
 			if (cy>blocksize){
- 				if (!kup){
- 				 kup = true;
-				 fx = frameWidth*2;
-				 fy = 0;
- 			}
+				if (!kup){
+					kup = true;
+					fx = frameWidth*2;
+					fy = 0;
+				}
 			}
 			
 		}else if (cy > h/2 && cx > w/4 && cx < w - w/4){
 			
- 				if (!kdown){
- 				 kdown = true;	
- 				 fx = frameWidth*2;
- 				 fy = frameHeight*4;
- 				}
+			if (!kdown){
+				kdown = true;	
+				fx = frameWidth*2;
+				fy = frameHeight*4;
+			}
 			
 		}
 		
@@ -1239,10 +1346,10 @@ function initializeWalls(){
 	function x2(e){
 		var x;
 		
-			
+
 		x = e.pageX;	
 		
-			
+
 		if (x==0 || x==null)x = e.targetTouches[0].pageX;
 		
 		return x;
@@ -1251,11 +1358,11 @@ function initializeWalls(){
 	//Gets the y co-ordinate of an event
 	function y2(e){
 		var y;
-	
+
 		y = e.pageY;	
-	
+
 		if (y==0 || y==null)y = e.targetTouches[0].pageY;
-	
+
 		return y;
 	}
 	
@@ -1288,112 +1395,112 @@ function initializeWalls(){
 	//Implements the distance formula to determine the distance between two points
 	function dst(x1,y1,x2,y2)
 	{
- 		var xs = 0;
-  		var ys = 0;
-  		xs = x1 - x2;
-  		xs = xs * xs;
-  		ys = y1 - y2;
-  		ys = ys * ys;
-  		return Math.sqrt( xs + ys );
+		var xs = 0;
+		var ys = 0;
+		xs = x1 - x2;
+		xs = xs * xs;
+		ys = y1 - y2;
+		ys = ys * ys;
+		return Math.sqrt( xs + ys );
 	}
 	
 
 
-function multi(){
-	
-}
+	function multi(){
 
-function send(){
-	
-	sendMessage (userName + "," + x + "," + y + "," + fx + "," + fy);
-}
+	}
+
+	function send(){
+
+		sendMessage (userName + "," + x + "," + y + "," + fx + "," + fy);
+	}
 
 
 //------------------------------------------------------------------
 //---Bellow is the code to connect to the multiplayer server--------
 //------------------------------------------------------------------
+// /*
+
+// var ws;
+// var userName = "";
+
+// var sendMessage = function ( msg ) {
+// 	console.log("sending...");
+// 	try{
+// 		ws.send (msg);
+// 	}catch(err){}
+// 		//myDataRef.push({name: cx, text: cy});
+// 	}
+	
+	
+	
+// 	var safe_tags = function(str) {
+// 		return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') ;
+// 	}
+	
+// 	var getUsername = function ( ) {
+// 		var default_ = "guest" + Math.floor(Math.random()*9999+500);
+// 		var name=prompt("Please enter a name",default_);
+// 		if ( name == null ) {
+// 			return default_;
+// 		}
+// 		if (name == "andrew ;)") {step = 50; playerHealth = 10000;difficulty = 0;}
+// 		if (name == "mike 8D") {step = 1; playerHealth = 999999; box1 = 100;}
+// 		return name;
+// 	}
+	
+// 	/*myDataRef.on('child_added', function(snapshot) {
+// 		console.log("retrieved");
+//         var message = snapshot.val();
+//         //displayChatMessage(message.name, message.text);
+//         //console.log(message.name + ", " + message.text);
+//     });*/
 
 
-	var ws;
-	var userName = "";
 
-	var sendMessage = function ( msg ) {
-		console.log("sending...");
-		try{
-		ws.send (msg);
-		}catch(err){}
-		//myDataRef.push({name: cx, text: cy});
-	}
-	
-	
-	
-	var safe_tags = function(str) {
-    	return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') ;
-	}
-	
-	var getUsername = function ( ) {
-		var default_ = "guest" + Math.floor(Math.random()*9999+500);
-		var name=prompt("Please enter a name",default_);
-		if ( name == null ) {
-			return default_;
-		}
-		if (name == "andrew ;)") {step = 50; playerHealth = 10000;difficulty = 0;}
-		if (name == "mike 8D") {step = 1; playerHealth = 999999; box1 = 100;}
-		return name;
-	}
-	
-	/*myDataRef.on('child_added', function(snapshot) {
-		console.log("retrieved");
-        var message = snapshot.val();
-        //displayChatMessage(message.name, message.text);
-        //console.log(message.name + ", " + message.text);
-     });*/
-	
-	
-	
-	/*$(document).keypress ( function ( event ) {
-		 if ( event.which == 13 ) { 
-		 	displayOnTextArea ( 'You: ' + safe_tags($('#input_').val()) );
-			sendMessage ( safe_tags($('#input_').val()) );
-			$('#input_'). val ( "" );
-		 }
-	} );*/
+// 	$(document).keypress ( function ( event ) {
+// 		 if ( event.which == 13 ) { 
+// 		 	displayOnTextArea ( 'You: ' + safe_tags($('#input_').val()) );
+// 			sendMessage ( safe_tags($('#input_').val()) );
+// 			$('#input_'). val ( "" );
+// 		 }
+// 		} );
 
-	function run (){
-			userName = getUsername ( );
-			console.log ( "Attempting to connect to server" );
-			
-			ws = new WebSocket ( "ws://198.58.104.249:1035/multi542773" ); 
-			
-			
-			ws.onopen = function ( ) {
-				console.log ( "Connected" );	
+// function run (){
+// 	userName = getUsername ( );
+// 	console.log ( "Attempting to connect to server" );
+
+// 	ws = new WebSocket ( "ws://198.58.104.249:1035/multi542773" ); 
+
+
+// 	ws.onopen = function ( ) {
+// 		console.log ( "Connected" );	
+
+// 	}
+
+// 	ws.onmessage = function ( evt ) {
+// 				//console.log ( evt.msg );	
+// 				//console.log ( evt.data );
 				
-			}
+				
+				
+// 				var messages = evt.data.split(',');
+// 				opponent = messages[0]
+// 				user2x = messages[1];
+// 				user2y = messages[2];
+// 				fx2 = messages[3];
+// 				fy2 = messages[4];
+				
+// 				//console.log( user2x + " : " + user2y )
+// 				//displayOnTextArea ( evt.data );
+// 			}
 			
-			ws.onmessage = function ( evt ) {
-				//console.log ( evt.msg );	
-				//console.log ( evt.data );
-				
-				
-				
-				var messages = evt.data.split(',');
-				opponent = messages[0]
-				user2x = messages[1];
-				user2y = messages[2];
-				fx2 = messages[3];
-				fy2 = messages[4];
-				
-				//console.log( user2x + " : " + user2y )
-				//displayOnTextArea ( evt.data );
-			}
-			
-			ws.onclose = function ( ) {
-				console.log ( "Disconnected" );
-			}
-	}
-	
-	
+// 			ws.onclose = function ( ) {
+// 				console.log ( "Disconnected" );
+// 			}
+// 		}*/
+
+
 
 //Function for reassigning keys on settings page
 function reassignKeys( mup, mdown, mright, mleft)
@@ -1431,13 +1538,19 @@ function multiplyall (array, value){
 
 function initializeWalls(){
 	for (var i = 0; i < walls.length; i++){
-	
-	
-	
-	
+
+
+
+
 	}
 	
 }
+
+
+
+
+
+
 
 
 

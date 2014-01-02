@@ -29,27 +29,41 @@ wsServer.on('request', function(r){
 		pair : null,
 		id : id
 	}
-
+	connection.sendUTF(id);
 	if (noPairs.length == 0){
 		//If there are no valid matches, then queue up for a match.
 		noPairs.push(clients[id]);
 	}else{
 		//Match up with whomever has been waiting the longest.
 		clients[id].pair = noPairs[0].connection;
-		clients[noPairs[0].id].pair = clients[id].connection
+		clients[noPairs[0].id].pair = clients[id].connection;
+		clients[id].connection.sendUTF("connected");
+		clients[id].pair.sendUTF("connected");
 		noPairs.splice(0, 1);
 
 	}
 
-	connection.sendUTF(id);
+	
 
 	console.log((new Date()) + ' Connection accepted [' + id + ']');
 
 
 	// Create event listener
 	connection.on('message', function(message) {
+		console.log(message);
+		if (message.utf8Data.indexOf(":::") != -1){
+			var data = message.utf8Data.split(':::');
+		}else{
+			console.log("Null!!!  " + message.utf8Data);
+			return;
+		}
 
-		var data = message.utf8Data.split(':');
+		/*
+		if (data.length < 2) {
+			console.log("Null!!!  " + message.utf8Data);
+			return;
+		}
+		*/
 
 		//The id of the user sending the message.
 		var _id = data[0];
@@ -58,7 +72,7 @@ wsServer.on('request', function(r){
 	    var msg = data[1];
 
 	    //Send the message to the user's pair.
-	    clients[_id].pair.sendUTF(msg);
+	    clients[id].pair.sendUTF(msg);
 
 	});
 

@@ -203,11 +203,12 @@ function run2(){
 			var newScript = document.createElement('script');
 			newScript.type = 'text/javascript';
 			newScript.onload=function(){
-				coop();	
+				game2();	
 			}
-			newScript.src = 'http://openedfire.com/coop.js';
+			newScript.src = 'coop2.js';
 			headID.appendChild(newScript);
-			document.getElementById("coop").style.visibility = "visible";
+			document.getElementById("game1").style.visibility = "visible";
+			document.getElementById("i").style.visibility = "visible";
 			//coop();
 		}
 		if (c2) {
@@ -220,7 +221,7 @@ function run2(){
 			var newScript = document.createElement('script');
 			newScript.type = 'text/javascript';
 			newScript.onload=game;
-			newScript.src = 'http://openedfire.com/game.js';
+			newScript.src = 'game.js';
 			headID.appendChild(newScript);*/
 			
 			document.getElementById("game1").style.visibility = "visible";

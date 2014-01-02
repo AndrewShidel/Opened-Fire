@@ -709,8 +709,7 @@ function send(){
 			
 			
 			ws.onopen = function ( ) {
-				console.log ( "Connected" );	
-				
+				console.log ( "Connected" );					
 			}
 			
 			ws.onmessage = function ( evt ) {
@@ -727,19 +726,19 @@ function send(){
 					user2y.splice(0,1);
 					players--;
 				}else{
-				if ( opponent.indexOf( messages[0] )  >= 0) {
-					var index = opponent.indexOf( messages[0] );
-					opponent[index] = messages[0];
-					user2x[index] = messages[1];
-					user2y[index] = messages[2];
-				}else{
-					players++;
-					opponent[players - 1] = messages[0];
-					user2x[players - 1] = messages[1];
-					user2y[players - 1] = messages[2];
-				}
-				//console.log( user2x + " : " + user2y )
-				//displayOnTextArea ( evt.data );
+					if ( opponent.indexOf( messages[0] )  >= 0) {
+						var index = opponent.indexOf( messages[0] );
+						opponent[index] = messages[0];
+						user2x[index] = messages[1];
+						user2y[index] = messages[2];
+					}else{
+						players++;
+						opponent[players - 1] = messages[0];
+						user2x[players - 1] = messages[1];
+						user2y[players - 1] = messages[2];
+					}
+					//console.log( user2x + " : " + user2y )
+					//displayOnTextArea ( evt.data );
 				}
 			}
 			
