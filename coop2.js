@@ -213,6 +213,135 @@ ws.addEventListener("message", function(e) {
 			    
 			});
 
+function parse(msg){
+	var json = JSON.parse(msg);
+	eval(json.type + "(json)" );
+}
+
+
+
+///---------------------------------------
+///------Sending methods------------------
+///---------------------------------------
+function sendPlayer(){
+	var json = {
+		type:"Player",
+		x:x,
+		y:y
+	}
+	ws.send(id+":::"+JSON.stringify(json));
+}
+
+function sendPlayerAdvanced(){
+	var json = {
+		type:"PlayerAdvanced",
+		x:x,
+		y:y,
+		fx:fx,
+		fy:fy
+	}
+	ws.send(id+":::"+JSON.stringify(json));
+}
+
+//Implementation will need to be changed eventually.
+function sendZombies(){
+	var json = {
+		type:"Zombies",
+		zx:zx,
+		zy:zy,
+		fx2:fx2,
+		fy2:fy2,
+		zt:zt
+	}
+	ws.send(id+":::"+JSON.stringify(json));
+}
+
+//Experimental implementation to send only newlly created zombies.
+function sendNewZombies(nx,ny,_fx2,_fy2,_zt){
+	var json = {
+		type:"NewZombies",
+		nx:nx,
+		ny:ny,
+		fx2:_fx2,
+		fy2:_fy2,
+		zt:_zt
+	}
+	ws.send(id+":::"+JSON.stringify(json));
+}
+
+function sendMissiles(){
+	var l = missiles.length;
+	var m = [missiles[l-4], missiles[l-3], missiles[l-2], missiles[l-1]];
+	var json = {
+		type:"Missiles",
+		m:m
+	}
+	ws.send(id+":::"+JSON.stringify(json));
+}
+
+function sendObjects(){
+	var json = {
+		type:"Objects",
+		gears:gears,
+		bx:bx,
+		by:by,
+		bombOn:bombOn;
+	}
+	ws.send(id+":::"+JSON.stringify(json));
+}
+
+
+
+
+///---------------------------------------
+///------Parsing methods------------------
+///---------------------------------------
+
+function Player(json){
+	user2x = json.x;
+	user2y = json.y;
+}
+
+function PlayerAdvanced(json){
+	user2x = json.x;
+	user2y = json.y;
+	//Must add user2 fx and user2 fy
+}
+
+function Zombies(json){
+		zx=json.zx;
+		zy=json.zy;
+		fx2=json.fx2;
+		fy2=json.fy2;
+		zt=json.zt;
+}
+
+function NewZombies(json){		
+		zx.push(json.nx);
+		zy.push(json.ny);
+		fx2.push(json.fx2);
+		fy2.push(json.fy2);
+		zt.push(json.zt);	
+}
+
+function Missiles(json){
+	missiles = missiles.concat(json.m);
+}
+
+function Objects(json){
+	gears=json.gears,
+	bx=json.bx,
+	by=json.by,
+	bombOn=json.bombOn;
+}
+
+
+
+
+
+
+
+
 
 //For player 1 to send to player 2.
 function makeJSON(){
@@ -226,25 +355,12 @@ function makeJSON(){
 		"zy":zy,
 		"gears":gears
 
-
 	}
 
 	ws.send(id+":::"+JSON.stringify(json));
 
 }
 
-function makeJSONx(){
-
-
-	var json = {
-
-		"x":x,
-		"y":y,
-	}
-
-	ws.send(id+":::"+JSON.stringify(json));
-
-}
 
 //For player 2 to send to player 1.
 function makeResponseJSON(){
@@ -265,10 +381,6 @@ function parseFromPlayer1(json){
 	zy = json.zy;
 }
 
-function parseFromPlayer1xfdsa(json){
-	user2x = json.x;
-	user2y = json.y;
-}
 
 //Parse JSON sent from player 2 to player 1.
 function parseFromPlayer2(json){
@@ -1042,8 +1154,7 @@ function postdraw(){
  	//Draws zombies
  	for (var i = 0; i<zx.length; i++){
  		//ctx1.drawImage(pattern, zx[i], zy[i],blocksize *.9,blocksize * .9);
- 		if (fx2[i] > img2Width || fy2[i] > imgHeight || fx2[i] < 0 || fy2[i] < 0) console.log(fx2[i] + ", " + fy2[i] + ": " + zd[i] );
- 		
+ 		//if (fx2[i] > img2Width || fy2[i] > imgHeight || fx2[i] < 0 || fy2[i] < 0) console.log(fx2[i] + ", " + fy2[i] + ": " + zd[i] ); 		
  		if (zt[i] == 0){
  			ctx1.drawImage(zimg, fx2[i], fy2[i], frame2Width, frame2Height, zx[i], zy[i], frame2Width, frame2Height);
  		}else if (zt[i] == 1){
