@@ -44,9 +44,11 @@ function run2(){
 	oy = new Array();
 	ox = new Array(); 
 	
-	w=$(window).width();
-	h=$(window).height();
-	
+	//w=$(window).width();
+	//h=$(window).height();
+	w=window.innerWidth;
+	h=window.innerHeight;
+
 	if (w>h){
 		c1R = h/30;
 	}else{
